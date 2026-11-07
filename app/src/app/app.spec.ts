@@ -14,10 +14,14 @@ describe('App', () => {
     expect(app).toBeTruthy();
   });
 
-  it('should render title', async () => {
+  it('should render the neighborhood support screen', async () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, app');
+
+    expect(compiled.querySelector('h1')?.textContent).toContain('Apoio do bairro');
+    expect(compiled.querySelector('[data-action="contatos"]')?.textContent).toContain('Contatos');
+    expect(compiled.querySelector('[data-action="avisos"]')?.textContent).toContain('Avisos');
+    expect(compiled.textContent).toContain('Funções em desenvolvimento');
   });
 });
