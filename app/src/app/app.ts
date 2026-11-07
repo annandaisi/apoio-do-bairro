@@ -18,7 +18,7 @@ import { CONTATOS_TESTE } from './contatos.teste';
               Avisos
             </button>
           </nav>
-        } @else {
+        } @else if (tela() === 'contatos') {
           <h2>Contatos</h2>
           <p class="warning" role="alert">Dados fictícios — não faça ligações</p>
 
@@ -28,12 +28,33 @@ import { CONTATOS_TESTE } from './contatos.teste';
                 <strong>{{ contato.nome }}</strong>
                 <span>{{ contato.telefone }}</span>
                 <small>{{ contato.fonte }}</small>
+                <button
+                  type="button"
+                  class="open-button"
+                  [attr.data-open-contact]="contato.nome"
+                  (click)="abrirContato(contato)"
+                >
+                  Abrir
+                </button>
               </li>
             }
           </ul>
 
           <button type="button" class="back-button" (click)="voltarAoInicio()">
             Voltar ao início
+          </button>
+        } @else {
+          <p class="selected-label">Contato selecionado</p>
+          <p class="warning" role="alert">Dados fictícios — não faça ligações</p>
+
+          <div class="selected-contact" aria-live="polite">
+            <strong>{{ contatoSelecionado()?.nome }}</strong>
+            <span>{{ contatoSelecionado()?.telefone }}</span>
+            <small>{{ contatoSelecionado()?.fonte }}</small>
+          </div>
+
+          <button type="button" class="back-button" (click)="voltarALista()">
+            Voltar à lista
           </button>
         }
       </section>
@@ -154,8 +175,43 @@ import { CONTATOS_TESTE } from './contatos.teste';
       font-weight: 700;
     }
 
+    .open-button,
     .back-button {
       width: 100%;
+      min-height: 44px;
+    }
+
+    .open-button {
+      margin-top: 8px;
+      font-size: 1rem;
+      padding-block: 10px;
+    }
+
+    .selected-label {
+      margin: 20px 0 12px;
+      font-size: clamp(1.25rem, 5vw, 1.5rem);
+      font-weight: 800;
+    }
+
+    .selected-contact {
+      display: grid;
+      gap: 8px;
+      margin-bottom: 20px;
+      border: 2px solid #d3e0dc;
+      border-radius: 6px;
+      padding: 20px 16px;
+      background: #f8fbfa;
+      font-size: clamp(1rem, 4vw, 1.125rem);
+    }
+
+    .selected-contact strong {
+      font-size: clamp(1.25rem, 5vw, 1.5rem);
+    }
+
+    .selected-contact small {
+      color: #53635e;
+      font-size: 1rem;
+      font-weight: 700;
     }
 
     @media (max-width: 420px) {
@@ -176,14 +232,26 @@ import { CONTATOS_TESTE } from './contatos.teste';
 })
 export class App {
   protected readonly title = signal('Apoio do bairro');
-  protected readonly tela = signal<'inicio' | 'contatos'>('inicio');
+  protected readonly tela = signal<'inicio' | 'contatos' | 'contato'>('inicio');
   protected readonly contatos = CONTATOS_TESTE;
+  protected readonly contatoSelecionado = signal<(typeof CONTATOS_TESTE)[number] | null>(null);
 
   protected abrirContatos(): void {
     this.tela.set('contatos');
   }
 
+  protected abrirContato(contato: (typeof CONTATOS_TESTE)[number]): void {
+    this.contatoSelecionado.set(contato);
+    this.tela.set('contato');
+  }
+
   protected voltarAoInicio(): void {
+    this.contatoSelecionado.set(null);
     this.tela.set('inicio');
+  }
+
+  protected voltarALista(): void {
+    this.contatoSelecionado.set(null);
+    this.tela.set('contatos');
   }
 }

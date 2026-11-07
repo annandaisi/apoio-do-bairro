@@ -25,7 +25,7 @@ describe('App', () => {
     expect(compiled.textContent).toContain('Funções em desenvolvimento');
   });
 
-  it('should open contacts and return to the home screen', async () => {
+  it('should open contacts and their details', async () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
     const compiled = fixture.nativeElement as HTMLElement;
@@ -40,6 +40,35 @@ describe('App', () => {
     expect(compiled.textContent).toContain('(00) 0000-0002');
     expect(compiled.textContent).toContain('Fonte de demonstração');
     expect(compiled.textContent).toContain('Dados fictícios — não faça ligações');
+
+    const openCentralSol = compiled.querySelector('[data-open-contact="Central Sol"]') as HTMLButtonElement;
+    openCentralSol.click();
+    await fixture.whenStable();
+
+    expect(compiled.textContent).toContain('Contato selecionado');
+    expect(compiled.textContent).toContain('Central Sol');
+    expect(compiled.textContent).toContain('(00) 0000-0001');
+    expect(compiled.textContent).toContain('Fonte de demonstração');
+    expect(compiled.textContent).toContain('Dados fictícios — não faça ligações');
+
+    const backToList = [...compiled.querySelectorAll('button')]
+      .find((button) => button.textContent?.includes('Voltar à lista')) as HTMLButtonElement;
+    backToList.click();
+    await fixture.whenStable();
+
+    const openPracaSol = compiled.querySelector('[data-open-contact="Apoio da Praça Sol"]') as HTMLButtonElement;
+    openPracaSol.click();
+    await fixture.whenStable();
+
+    expect(compiled.textContent).toContain('Contato selecionado');
+    expect(compiled.textContent).toContain('Apoio da Praça Sol');
+    expect(compiled.textContent).toContain('(00) 0000-0002');
+    expect(compiled.textContent).toContain('Fonte de demonstração');
+
+    const backToHome = [...compiled.querySelectorAll('button')]
+      .find((button) => button.textContent?.includes('Voltar à lista')) as HTMLButtonElement;
+    backToHome.click();
+    await fixture.whenStable();
 
     const backButton = [...compiled.querySelectorAll('button')]
       .find((button) => button.textContent?.includes('Voltar ao início')) as HTMLButtonElement;
